@@ -46,4 +46,4 @@ A collection of AI automation workflows built with n8n, covering lead qualificat
 
 ## Tools
 
-n8n (self-hosted), OpenAI API
+n8n (self-hosted)
