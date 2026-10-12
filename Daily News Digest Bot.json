@@ -1,0 +1,194 @@
+{
+  "name": "Daily News Digest Bot",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -32
+      ],
+      "id": "aa9139bf-487a-4d11-bb13-c1d8bcd46396",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        -16
+      ],
+      "id": "3499e54c-4292-4c35-8acf-43097b0fd71b",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        384,
+        -16
+      ],
+      "id": "5ad15e0e-214b-4cdd-9d20-7e4cbf8ec676",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -16
+      ],
+      "id": "f5ab9d64-778a-499e-8f9d-916d128c9b0a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        -16
+      ],
+      "id": "df4326b3-5d0b-4240-82b5-d9cd55bccd73",
+      "name": "Send a text message",
+      "webhookId": "a2e339da-e1ca-4275-8c59-ac4b474a5a51",
+      "retryOnFail": false,
+      "maxTries": 5,
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.8-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.8-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "= 'Here are today\\'s tech headlines: {{ $json.title }}. Write a short daily digest in simple English, one line per headline, friendly tone.' (e"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -48
+      ],
+      "id": "1181312b-09a5-44ba-be97-6fe744388cae",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ce74ba7e-d2d8-4603-9963-89a3569b858d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "OyTpA0JWwRtQuaDz",
+  "tags": []
+}
