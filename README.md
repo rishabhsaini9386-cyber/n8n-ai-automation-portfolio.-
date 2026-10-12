@@ -43,7 +43,12 @@ A collection of AI automation workflows built with n8n, covering lead qualificat
 **Skills demonstrated:** Multi-tool AI agent orchestration, conversation memory, clear tool descriptions, sub-workflow integration.
 
 ---
+---
 
-## Tools
+## 📰 Daily News Digest Bot
 
-n8n (self-hosted)
+**Problem it solves:** Business owners need to stay updated with industry news but rarely have time to read multiple sites. This bot collects the top headlines every day, summarizes them in simple language, and delivers the digest straight to Telegram.
+
+**How it works:** A scheduled trigger reads headlines from an RSS feed, combines the top 5 into a single list, and an AI model writes a short friendly digest which is sent as a Telegram message.
+
+**Skills demonstrated:** RSS data fetching, data aggregation, AI summarization, real-world app integration (Telegram), handling output formatting between apps.
