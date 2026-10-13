@@ -1,0 +1,393 @@
+{
+  "name": "universal assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -448,
+        -112
+      ],
+      "id": "9cfe6668-da0a-45ae-80b1-4a729aebff93",
+      "name": "When chat message received",
+      "webhookId": "60b7a694-77ca-4fc5-9845-645840c00b9b"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        336,
+        16
+      ],
+      "id": "7fcac13e-2207-431b-b8e9-f27b6c7a942a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1df91a16-5577-4a21-b936-319209b70175",
+              "name": "document",
+              "value": "Our company TechFlow Solutions offers 24/7 customer support via chat and email. Refund policy: We offer a 30-day money back guarantee on all products, no questions asked. Office hours are 9am to 6pm IST, Monday to Saturday. We accept payments via credit card, debit card, UPI, and net banking. Shipping typically takes 3-5 business days within India, and 7-10 business days for international orders. For enterprise customers, we offer custom pricing and dedicated account managers. Our headquarters is located in Bangalore, India.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        560,
+        16
+      ],
+      "id": "9fe076d4-cd33-4ae1-8951-b1bb61f078bb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        16
+      ],
+      "id": "7b6f6ddb-555f-42ec-b8d8-db12ee15a64c",
+      "name": "Simple Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        224
+      ],
+      "id": "fc5895a2-5d76-487c-80e4-9a47d3e50736",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "db3309fb-4cf9-417f-8e7a-574af07b4846",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "ou are TechFlow Solutions business assistant. You can both qualify sales leads (using lead scoring tool) and answer support questions (simple vector tool). Remember context from earlier in the conversation.'"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        -112
+      ],
+      "id": "83d1f431-0207-457b-b7f8-a58710a7c34a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -304,
+        96
+      ],
+      "id": "8a10d286-c3ac-4f9e-83f8-3c5557398674",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to answer any questions about company policies, refunds, shipping, support hours, pricing, or other information that might be in the knowledge base.",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        272
+      ],
+      "id": "65dc73c9-38bb-4b0b-b089-c0bbb9f160c5",
+      "name": "Simple Vector Store1"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        384
+      ],
+      "id": "f131c5ef-76fe-4654-9fd7-5ae4bfa92f68",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool when a potential customer shares their company size (number of employees) and/or budget, to classify them as a Hot, Warm, or Cold lead. Pass the employee count as input.",
+        "workflowId": {
+          "__rl": true,
+          "value": "CFCVm9nuook2iogd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CFCVm9nuook2iogd",
+          "cachedResultName": "Lead Qualifier Bot"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "employee": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('employee', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "employee"
+          ],
+          "schema": [
+            {
+              "id": "employee",
+              "displayName": "employee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        128
+      ],
+      "id": "57d22e53-5753-4fe9-be9e-65edd07f413e",
+      "name": "Call 'Lead Qualifier Bot'"
+    },
+    {
+      "parameters": {
+        "description": "\"Use this when the customer's question is not covered by the knowledge base, to escalate to a human support agent.\"",
+        "workflowId": {
+          "__rl": true,
+          "value": "BPepM7zvmHBck4mM",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BPepM7zvmHBck4mM",
+          "cachedResultName": "escalate workflow"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        96
+      ],
+      "id": "9c7fda5d-1b7b-4b3d-b589-74b136be0ed4",
+      "name": "Call 'escalate workflow'"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        112
+      ],
+      "id": "5405e239-9f18-4465-ba48-33aac9ae0a8b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "0XTr7PLWXlHcwRPT",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Simple Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Lead Qualifier Bot'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'escalate workflow'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3c0db71d-12f0-4883-a420-77600a7aabb1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "820xpIyJosw8kVQF",
+  "tags": []
+}
