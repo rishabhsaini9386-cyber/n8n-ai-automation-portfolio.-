@@ -52,3 +52,21 @@ A collection of AI automation workflows built with n8n, covering lead qualificat
 **How it works:** A scheduled trigger reads headlines from an RSS feed, combines the top 5 into a single list, and an AI model writes a short friendly digest which is sent as a Telegram message.
 
 **Skills demonstrated:** RSS data fetching, data aggregation, AI summarization, real-world app integration (Telegram), handling output formatting between apps.
+
+## 📊 Case Study: Inquiry Automation for a Coaching Center (Demo Project)
+
+**The scenario:** A coaching center receives many inquiries from students and parents. With so many coming in, some get missed, and the owner spends a lot of time reading and sorting them by hand.
+
+**What I built:** An automation in n8n that works like this:
+1. Every inquiry arrives through a single web form.
+2. An AI classifier sorts it as **Urgent**, **Normal**, or **Spam**.
+3. The AI writes a polite draft reply for the owner.
+4. Every inquiry, with its category and draft reply, is saved to Google Sheets.
+5. Only **urgent** inquiries trigger an instant Telegram alert to the owner.
+6. If the AI step fails, a fallback alert still notifies the owner, so no inquiry is silently lost.
+
+**A problem I had to solve:** When connecting Google Sheets, sign-in kept failing with "Access blocked". I traced it to my Google Cloud app being in testing mode, where only approved test users can sign in. Adding my account as a test user fixed it. Later, Telegram rejected my messages because the AI's Markdown symbols broke its formatting; I fixed it by asking the AI for plain text and setting the message format to HTML.
+
+**The outcome (tested with sample inquiries):** Urgent, normal, and spam messages were each routed correctly. In this setup no inquiry is missed, every one is recorded in a single place, and the owner is alerted instantly only when something needs attention, which saves time on sorting.
+
+**Skills used:** Form Trigger, AI Text Classifier, conditional routing, Google Sheets (OAuth), Telegram integration, error-handling fallback, debugging.
