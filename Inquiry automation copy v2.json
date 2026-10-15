@@ -1,0 +1,577 @@
+{
+  "name": "Inquiry automation copy v2",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "inquiry Automation",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name"
+            },
+            {
+              "fieldLabel": "Course"
+            },
+            {
+              "fieldLabel": "Message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -624,
+        -96
+      ],
+      "id": "fcf11ea8-be56-4908-9cd9-ad39203bd9cd",
+      "name": "On form submission",
+      "webhookId": "8217dfc6-2f6c-4e5e-b1c4-badead806b4b"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=A student named {{ $json.Name }} asked about {{ $json.Course }} with this message: {{ $json.Message }}. Write a polite 2-line reply and mark urgency as High or Normal. Use plain text only, no asterisks or markdown.' "
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -176
+      ],
+      "id": "ebf460aa-6979-44d2-a55c-f56dcbf164b9",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet 99",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1069872576,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit#gid=1069872576"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "course ": "={{ $('On form submission').item.json.Course }}",
+            "message": "={{ $('On form submission').item.json.Message }}",
+            "Ai response": "={{ $json.content.parts[0].text }}",
+            "category": "Urgent"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "course ",
+              "displayName": "course ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ai response",
+              "displayName": "Ai response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        -240
+      ],
+      "id": "93e217bf-69dc-43c1-992c-83d8eb247a20",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "=URGENT 'New inquiry from {{ $json.Name }}  for {{ $json['course '] }}. Draft reply :{{ $json['Ai response'] }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        128
+      ],
+      "id": "466f6a15-19d8-4874-a54e-ebcbaf791e71",
+      "name": "Send a text message",
+      "webhookId": "0664f0f1-6bf4-458f-a0cb-477b9c7e1de3",
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.Message }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "=urgent",
+              "description": "Message that need immediate attention."
+            },
+            {
+              "category": "normal",
+              "description": "Standard inquiry seeking general question "
+            },
+            {
+              "category": "spam",
+              "description": "irrelevant, unsolicited or promotional message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        16
+      ],
+      "id": "e23b3a17-95a6-4247-a8db-8b5581045e3b",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=A student named {{ $json.Name }} asked about {{ $json.Course }} with this message: {{ $json.Message }}. Write a polite 2-line reply and mark urgency as High or Normal. Use plain text only, no asterisks or markdown.' "
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        0
+      ],
+      "id": "ef897f22-40a0-4255-b540-3ccc23011deb",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet 99",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1069872576,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit#gid=1069872576"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "course ": "={{ $('On form submission').item.json.Course }}",
+            "message": "={{ $('On form submission').item.json.Message }}",
+            "Ai response": "={{ $json.content.parts[0].text }}",
+            "category": "Normal"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "course ",
+              "displayName": "course ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ai response",
+              "displayName": "Ai response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        -80
+      ],
+      "id": "097c159c-fc41-47aa-8043-1652317107db",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE",
+          "mode": "list",
+          "cachedResultName": "Untitled spreadsheet 99",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1069872576,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WONgaZMbJR1PxzWStsHHpEIXsPVJglmhgMDy-ETx2QE/edit#gid=1069872576"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "category": "spam"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "course ",
+              "displayName": "course ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ai response",
+              "displayName": "Ai response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        64,
+        208
+      ],
+      "id": "f5f7b2a0-e8fa-4a57-8adf-1e1dd3a2803c",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        224
+      ],
+      "id": "1d674b40-4bbb-4cfc-88dd-6b5bc2c6b71d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OQRARrmrPdtKIBnN",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "38ab03c0-51b0-416c-a76e-a2802df9eee3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "h2BR12CkzHEAbAdh",
+  "tags": []
+}
