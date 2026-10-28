@@ -1,0 +1,969 @@
+{
+  "name": "grocery store",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -176
+      ],
+      "id": "8aaddce8-3316-45e8-969c-08b664c82f27",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w",
+          "mode": "list",
+          "cachedResultName": "saloon booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1455790408,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w/edit#gid=1455790408"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        -128
+      ],
+      "id": "89cb9b5f-2a40-4582-8db4-997c4c612824",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "540ccf35-9854-4059-af2a-af346b300e14",
+              "name": "Revenue",
+              "value": "={{ $json.Price* $json.Qty }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "ignoreConversionErrors": true,
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -208,
+        -288
+      ],
+      "id": "deef1532-bb4a-41c1-9588-8ce0a6c9e9d1",
+      "name": "Edit Fields",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "=Revenue"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Date",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -272
+      ],
+      "id": "d0efb1c4-490c-45e5-8a64-68e7229a397e",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Date",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        208,
+        -288
+      ],
+      "id": "c44a3580-086d-4cff-97a2-5e200332d4b2",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -304
+      ],
+      "id": "3e59d6bc-83f8-4c39-9116-5a35e7142500",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Date"
+            },
+            {
+              "fieldToAggregate": "sum_Revenue"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -288
+      ],
+      "id": "7b995d3c-8926-4c2a-b4ba-2163a996452a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c78a835-2031-47d2-9d9a-7429a2559252",
+              "leftValue": "=10/22/26",
+              "rightValue": "={{ $json.Date }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        -544
+      ],
+      "id": "7d50edca-5f30-49d7-b737-def46520ab65",
+      "name": "Filter1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Qty"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        -544
+      ],
+      "id": "25f0e0a7-dd95-4958-b7cc-537c1e3ce355",
+      "name": "Summarize1"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "sum_Qty",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -544
+      ],
+      "id": "14ea473b-a8d7-4684-9f47-b724ae8650e1",
+      "name": "Sort1"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.Date }}",
+        "options": {
+          "includeInputFields": true
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        32
+      ],
+      "id": "c5d96d31-320a-4bf9-8cf0-61aba45f99ea",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "51bee98f-ba92-4f77-9a08-ed45631969e2",
+              "leftValue": "={{ $json.formattedDate }}",
+              "rightValue": "={{ $('Get row(s) in sheet').item.json.Date }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "e706d95a-75ee-4a31-89b9-3de3da9c8681",
+              "leftValue": "={{ $json.formattedDate }}",
+              "rightValue": "10/22/2026",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        32
+      ],
+      "id": "2539e89b-e855-4625-995c-726b10c1ddbb",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "540ccf35-9854-4059-af2a-af346b300e14",
+              "name": "Revenue",
+              "value": "={{ $json.Price* $json.Qty }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "ignoreConversionErrors": true,
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        320,
+        48
+      ],
+      "id": "09a4a7ac-7814-4a18-9a3b-ceeade270e41",
+      "name": "Edit Fields2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Revenue"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Date",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        48
+      ],
+      "id": "00da7bbb-e586-401a-9e6b-9034cbd616aa",
+      "name": "Summarize2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce493014-bf6a-4b33-ab5f-507125bcfc48",
+              "leftValue": "=10/22/2026",
+              "rightValue": "={{ $json.Date }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        304
+      ],
+      "id": "a4a80a46-2e08-4932-abf7-a4315571b4c0",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "540ccf35-9854-4059-af2a-af346b300e14",
+              "name": "Revenue",
+              "value": "={{ $json.Price* $json.Qty }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "ignoreConversionErrors": true,
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        208,
+        320
+      ],
+      "id": "4346a5f7-5eb2-432d-bf45-04aacc71a461",
+      "name": "Edit Fields3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combineBySql",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1184,
+        496
+      ],
+      "id": "9775c4cf-b548-4d81-a04a-2e4de3d1b37a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dc6de040-02f9-4ee0-9cf9-bd216b89bff8",
+              "leftValue": "={{ $json.sum_Revenue }}",
+              "rightValue": "={{ $json.average_sum_Revenue*0.7}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1408,
+        528
+      ],
+      "id": "12d4dbf7-551a-490a-ba8f-89d069c5a014",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "average",
+              "field": "sum_Revenue"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        32
+      ],
+      "id": "fea58152-5dba-41fa-9886-55f9c6910976",
+      "name": "average"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b85e3ca2-cb54-4a57-874f-7686ce9030fb",
+              "name": "sales perfomance",
+              "value": "={{ (((($json.sum_Revenue[0] - $json.sum_Revenue[1]) / $json.sum_Revenue[1]) * 100)).toFixed(1) + \"%\" }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        768,
+        -256
+      ],
+      "id": "f2a5b3ea-0317-4d78-8cdf-9b6f01a5e59d",
+      "name": "sales record",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Revenue"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Date",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        336
+      ],
+      "id": "d297d9bc-80ca-484e-8f60-f82078716502",
+      "name": "today sales"
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        752,
+        -544
+      ],
+      "id": "a24c7775-a5fc-4559-b769-516b7241de9d",
+      "name": "item sale today"
+    },
+    {
+      "parameters": {
+        "mode": "combineBySql",
+        "numberInputs": 4,
+        "query": "SELECT *\nFROM input1\nCROSS JOIN input2\nCROSS JOIN input3\nCROSS JOIN input4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1136,
+        -160
+      ],
+      "id": "77d86a29-458c-4bba-a2ad-cd42b62bb334",
+      "name": "Merge1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=hey this our today sales {{ $json.data[0].Item }} {{ $json.data[1].Item }} and this our quantity{{ $json.data[0].sum_Qty }} {{ $json.data[1].sum_Qty }}  which is sales today and today revenue {{ $json.sum_Revenue }} and our sales perfomance is this {{ $json['sales perfomance'] }} and our average sales is this {{ $json.average_sum_Revenue }} ",
+        "options": {
+          "systemMessage": "You are an expert AI assistant for a small general store owner. Your task is to write a concise, friendly, and accurate 2-line daily sales summary in simple english.\ncall telegram tool if sales is below our average sales and alert message\nCRITICAL RULES:\n1. STRICTLY NO CALCULATIONS: Do not calculate totals, percentages, averages, or invent any numbers. You are strictly forbidden from changing or modifying any figures.\n2. USE PROVIDED DATA ONLY: Use only the exact pre-calculated variables passed to you in the input data.\n3. FORMATTING: Output must be strictly plain text, exactly 2 lines long, written in a clear, polite tone suitable for a local shop owner. No markdown headers or code blocks.\n4. use proper sign e.g sales down 83 % not -83%.\n5. mention all sales item."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1360,
+        -160
+      ],
+      "id": "1d1347d5-c6cc-4303-8c9b-3f4554f2e378",
+      "name": "AI Agent",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        128
+      ],
+      "id": "8a8dcf2e-fe7c-497b-808d-30fab642a095",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YReu1rSO2cuqQa2e",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        48
+      ],
+      "id": "1deadde5-af36-43b6-9848-5906aebc3526",
+      "name": "Send a text message in Telegram",
+      "webhookId": "965ff06c-619f-48b0-b070-a1fe1e0ee7a3",
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1872,
+        -160
+      ],
+      "id": "71ee626f-81b5-4646-8f4e-19daac36e63f",
+      "name": "Send a text message",
+      "webhookId": "14e1a8dc-abe5-44c0-9dad-ae580056a970",
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -544
+      ],
+      "id": "6bd9135b-54f6-4059-af6f-4cf8df90bb76",
+      "name": "Aggregate1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "sales record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize1": {
+      "main": [
+        [
+          {
+            "node": "Sort1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort1": {
+      "main": [
+        [
+          {
+            "node": "item sale today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Summarize2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize2": {
+      "main": [
+        [
+          {
+            "node": "average",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "today sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        []
+      ]
+    },
+    "average": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "sales record": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "today sales": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "item sale today": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message in Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0abce674-38f2-4894-bf3a-9a526d491992",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "WGY52cdfujJc2OBi",
+  "tags": []
+}
