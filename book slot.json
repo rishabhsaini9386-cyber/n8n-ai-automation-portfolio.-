@@ -1,0 +1,260 @@
+{
+  "name": "book slot",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "start time",
+              "type": "any"
+            },
+            {
+              "name": "end time",
+              "type": "any"
+            },
+            {
+              "name": "customer name"
+            },
+            {
+              "name": "service"
+            },
+            {
+              "name": "phone number",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac522884-436e-438e-bd18-99d683db0027",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "rishabhsaini9386@gmail.com",
+          "mode": "list",
+          "cachedResultName": "rishabhsaini9386@gmail.com"
+        },
+        "start": "={{ $('When Executed by Another Workflow').item.json['start time'] }}",
+        "end": "={{ $('When Executed by Another Workflow').item.json['end time'] }}",
+        "additionalFields": {
+          "summary": "=appointment with  {{ $('When Executed by Another Workflow').item.json['customer name'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        64
+      ],
+      "id": "bde42615-5fe0-4e17-aa74-2c561805af25",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "8q5Gm71peyXYheFX",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w",
+          "mode": "list",
+          "cachedResultName": "saloon booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1PBi7G2D6LYFtU3MyI-rxETSiIeHOJsLGrek0zKdLg5w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time slot": "={{ $('When Executed by Another Workflow').item.json['start time'] }} to {{ $('When Executed by Another Workflow').item.json['end time'] }}",
+            "Customer name": "={{ $('When Executed by Another Workflow').item.json['customer name'] }}",
+            "service ": "={{ $('When Executed by Another Workflow').item.json.service }}",
+            "phone number": "={{ $('When Executed by Another Workflow').item.json['phone number'] }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer name",
+              "displayName": "Customer name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "service ",
+              "displayName": "service ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "time slot",
+              "displayName": "time slot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone number",
+              "displayName": "phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "53b2fe63186a490e8ac9402172ef82cd.aHu4v9uw9PlfuquFOoFLifcb",
+              "displayName": "53b2fe63186a490e8ac9402172ef82cd.aHu4v9uw9PlfuquFOoFLifcb",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "open router api",
+              "displayName": "open router api",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        96
+      ],
+      "id": "6cc75121-5953-4bcd-ac13-94c51f7d69d2",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "=your appointment booked with {{ $('When Executed by Another Workflow').item.json['customer name'] }} at {{ $('When Executed by Another Workflow').item.json['start time'] }} to {{ $('When Executed by Another Workflow').item.json['end time'] }} and they wants {{ $('When Executed by Another Workflow').item.json.service }} ,{{ $('When Executed by Another Workflow').item.json['phone number'] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        240
+      ],
+      "id": "315c8eb4-5a2b-40a8-9f8a-bd6deca3680e",
+      "name": "Send a text message",
+      "webhookId": "1fc7e8f5-7fd3-4a1f-bf52-d017f6ea5b5b",
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "65d8a1cb-653a-42d4-b007-bc298d65875f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "zs1ASnCA5hU3QN4r",
+  "tags": []
+}
