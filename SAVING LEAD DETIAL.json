@@ -1,0 +1,410 @@
+{
+  "name": "SAVING LEAD DETIAL",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "name "
+            },
+            {
+              "name": "phone"
+            },
+            {
+              "name": "budget"
+            },
+            {
+              "name": "lead status"
+            },
+            {
+              "name": "timeline"
+            },
+            {
+              "name": "score"
+            },
+            {
+              "name": "hot/warm/cold"
+            },
+            {
+              "name": "chat summary"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -112
+      ],
+      "id": "05759506-8d88-4abf-8bb4-05863d6a49b7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json['hot/warm/cold'] }}",
+                    "rightValue": "Hot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a1d8f809-cc74-42c1-adfe-375f934f362e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HOT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1957ecd5-04db-4af2-b5da-c6001e68d97b",
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json['hot/warm/cold'] }}",
+                    "rightValue": "Warm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WARM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "62075e32-8a17-425d-a3aa-7130853ea891",
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json['hot/warm/cold'] }}",
+                    "rightValue": "Cold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "COLD"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -112
+      ],
+      "id": "c1dccdd8-97f5-4705-9576-25efc8a88e2e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "=NEW HOT LEAD! here is chat summary of a client.\n{{ $('When Executed by Another Workflow').item.json['chat summary'] }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        -272
+      ],
+      "id": "5b3fd11d-b9db-4cb3-9d66-6d88e8dd77aa",
+      "name": "Send a text message",
+      "webhookId": "8d96e3f3-6b59-4d2e-9e2f-30d3a7333cf5",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7750704220",
+        "text": "=NEW WARM LEAD! here is your chat summary of a client. \n{{ $('When Executed by Another Workflow').item.json['chat summary'] }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        -48
+      ],
+      "id": "95ac0423-773e-45e0-9bfd-4c454d8febd1",
+      "name": "Send a text message1",
+      "webhookId": "8d96e3f3-6b59-4d2e-9e2f-30d3a7333cf5",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "tEtlvgK06vWBhzwa",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1056,
+        -176
+      ],
+      "id": "56828d7d-21cf-4163-8a86-ce3bbcc4c8b5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mK621MHwZUxdm7MPv-j_QyuZzEXgsvcfG__S_0aclLs",
+          "mode": "list",
+          "cachedResultName": "Real estate",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mK621MHwZUxdm7MPv-j_QyuZzEXgsvcfG__S_0aclLs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mK621MHwZUxdm7MPv-j_QyuZzEXgsvcfG__S_0aclLs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "={{ $json.phone }}",
+            "Name": "={{ $json['name '] }}",
+            "Budget": "={{ $json.budget }}",
+            "Lead Status": "={{ $json['lead status'] }}",
+            "Timeline": "={{ $json.timeline }}",
+            "Score": "={{ $json.score }}",
+            "Hot / Warm / Cold": "={{ $json['hot/warm/cold'] }}"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Lead Status",
+              "displayName": "Lead Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hot / Warm / Cold",
+              "displayName": "Hot / Warm / Cold",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        -112
+      ],
+      "id": "e863ab77-43ed-497e-a20c-563308ce2f55",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ksy6TxEf8uPGl1sS",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9abafd79-7998-48b3-91a6-3e74c73daa68",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7ffd1bddf7b6e0f8ae76b85e9271bc393402989940eb6963aa23e1beccaf5c82"
+  },
+  "nodeGroups": [],
+  "id": "1IlscTdOUVT7yLS2",
+  "tags": []
+}
