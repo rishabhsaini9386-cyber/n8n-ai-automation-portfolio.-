@@ -70,3 +70,28 @@ A collection of AI automation workflows built with n8n, covering lead qualificat
 **The outcome (tested with sample inquiries):** Urgent, normal, and spam messages were each routed correctly. In this setup no inquiry is missed, every one is recorded in a single place, and the owner is alerted instantly only when something needs attention, which saves time on sorting.
 
 **Skills used:** Form Trigger, AI Text Classifier, conditional routing, Google Sheets (OAuth), Telegram integration, error-handling fallback, debugging.
+
+# Autonomous Real Estate AI Agent (n8n + RAG + Multi-Tier Lead Alerts)
+
+An autonomous real estate sales pipeline built using n8n and LLM tool calling. Designed around an explore-first consultative model: it surfaces verified inventory via vector search, gauges buyer intent organically, scores leads deterministically, and triggers real-time alerts for both urgent buyers and active prospects.
+
+---
+
+## Architecture & Data Flow
+
+```text
+User Inquiry 
+   │
+   ▼
+[n8n AI Agent] ◄──► [Vector Store (RAG Listing Retrieval)]
+   │
+   ▼ (Captures Name, Phone, Budget, Timeline)
+[SAVING LEAD DETAIL Sub-Workflow]
+   │
+   ├──► [Google Sheets API] (Appends record with score, category & chat summary)
+   │
+   └──► [Switch Node] 
+            │
+            ├── HOT Lead  (Timeline ≤ 30 days)  ──► [Telegram Alert: High Priority]
+            ├── WARM Lead (Timeline 1–3 months) ──► [Telegram Alert: Nurture Priority]
+            └── COLD Lead (Timeline > 3 months) ──► [Logs Only / Retargeting]
